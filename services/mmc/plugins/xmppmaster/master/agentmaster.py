@@ -1326,6 +1326,8 @@ class MUCBot(sleekxmpp.ClientXMPP):
                         result = XmppMasterDatabase().IpAndPortConnectionFromServerRelay(result1[0].id)
                         logger.debug("user rule selects relayserver for machine %s user %s \n %s" % (data['information']['info']['hostname'], data['information']['users'][0], result))
                         break
+                    
+            
 
             elif x[0] == 9:
                 #Associate relay server based on network address
