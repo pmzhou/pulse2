@@ -384,8 +384,6 @@ class P2PServerCP(pulse2.utils.Singleton):
                 bootmenus_folder = self.cp.get('imaging_api', 'bootmenus_folder')
             if self.cp.has_option('imaging_api', 'diskless_folder'):
                 diskless_folder = self.cp.get('imaging_api', 'diskless_folder')
-            if self.cp.has_option('imaging_api', 'davos_options'):
-                davos_options = self.cp.get('imaging_api', 'davos_options')
             if self.cp.has_option('imaging_api', 'tools_folder'):
                 tools_folder = self.cp.get('imaging_api', 'tools_folder')
             if self.cp.has_option("imaging_api", 'diskless_kernel'):
@@ -474,6 +472,10 @@ class P2PServerCP(pulse2.utils.Singleton):
                 inventory_port = self.cp.get("imaging_api", 'inventory_port')
             if self.cp.has_option("imaging_api", 'inventory_enablessl'):
                 inventory_enablessl = self.cp.get("imaging_api", 'inventory_enablessl')
+            if self.cp.has_option('imaging_api', 'davos_options'):
+                davos_options = self.cp.get('imaging_api', 'davos_options')
+            else:
+                davos_options = "nfs_server=%s nfs_share_masters=%s nfs_share_postinst=%s rpc_proxy=%s" % (self.public_ip, os.path.join(base_folder, masters_folder), os.path.join(base_folder, postinst_folder), self.public_ip)
             if not isUUID(uuid):
                 raise TypeError("'%s' is not an valid UUID : in my config file, section [imaging_api], set a correct uuid." % uuid)
 
