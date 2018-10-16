@@ -50,21 +50,9 @@ if ($id) {
     }
 }
 
-if(isset($_POST["lmembers"])){
- $members = unserialize(base64_decode($_POST["lmembers"]));
-}else{
-$members =false;
-}
-if(isset($_POST["lmachines"])){
- $machines = unserialize(base64_decode($_POST["lmachines"]));
-}else{
-$machines =false;
-}
-if(isset($_POST["lsmembers"])){
- $listOfMembers = unserialize(base64_decode($_POST["lsmembers"]));
-}else{
-$listOfMembers =false;
-}
+$members = unserialize(base64_decode($_POST["lmembers"]));
+$machines = unserialize(base64_decode($_POST["lmachines"]));
+$listOfMembers = unserialize(base64_decode($_POST["lsmembers"]));
 
 if (isset($_POST["bdelmachine_x"])) {
     if (isset($_POST["members"])) {
@@ -278,22 +266,13 @@ if (isset($_POST["bdelmachine_x"])) {
     //search entity for serverimaging
     $imss = xmlrpc_getAllImagingServersForProfiles(true);
 
-    if (isset($imss) && count($imss) == 1){
-        foreach ($imss as $key => $value){
+    $entitieval = -1;
+    foreach ($imss as $key => $value){
+        if ($value['imaging_uuid']== $imaging_server){
             $entitieval = $value['fk_entity'];
-            $imaging_server = $key;
+            break;
         }
     }
-    else{
-        $entitieval = -1;
-        foreach ($imss as $key => $value){
-            if ($value['imaging_uuid']== $imaging_server){
-                $entitieval = $value['fk_entity'];
-                break;
-            }
-        }
-    }
-
     $listOfMachines = getMachineforentityList(0, $truncate_limit, array('get'=>array('cn', 'objectUUID'), 
                                                     'imaging_server'=>$imaging_server,
                                                     'fk_entity' => $entitieval));
@@ -334,11 +313,10 @@ if (isset($_GET['pieGroupStatus'])) {
     }
 
     $diff = array_diff_assoc($machines, $members);
+    
     drawGroupList($machines, $members, $listOfMembers, $visibility, $diff, $group->id, htmlspecialchars($name), $_POST['filter'], $type);
 }
 else {
-    $_POST['filter']=isset($_POST['filter']) ? $_POST['filter'] : "";
-    $idgrp = isset($group->id) ? $group->id : null;
     drawGroupList($machines, $members, $listOfMembers, $visibility, $diff, $group->id, htmlspecialchars($name), $_POST['filter'], $type);
 }
 
