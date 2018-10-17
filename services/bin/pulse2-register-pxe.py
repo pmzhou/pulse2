@@ -436,14 +436,16 @@ def mac_adressexmlinformationsimple(file_content):
     else:
         return None
 
-def macadressclear(file_content, interface_mac_clear):
+def macadressclear(file_content, interface_mac_keep):
     root = ET.fromstring(file_content)
     boolremoveelement = False
+    interface_mac_clear = ''
     for child in root:
         if child.tag == "CONTENT":
             for network in child.findall('NETWORKS'):
                 for dd in network:
-                    if dd.tag == "MACADDR" and dd.text == interface_mac_clear:
+                    if dd.tag == "MACADDR" and dd.text != interface_mac_keep:
+                        interface_mac_clear = dd.text
                         boolremoveelement = True
                         child.remove(network)
                         break
@@ -476,7 +478,7 @@ def mac_adressexmlpxe(file_content):
         logging.getLogger().debug("no interface report for PXE")
         return None
 
-def mac_adressexml(file_content):    
+def mac_adressexml(file_content):
     macadrss = mac_adressexmlpxe(file_content)
     if macadrss != None:
         return macadrss
@@ -535,8 +537,9 @@ class MyEventHandler(pyinotify.ProcessEvent):
                 m = re.search('<REQUEST>.*<\/REQUEST>', file_content)
                 file_content = str(m.group(0))
                 try:
-                    file_content = macadressclear(file_content, "00:00:00:00:00:00")
+                    # remove all interfaces except for the pxe one
                     mac = mac_adressexml(file_content)
+                    file_content = macadressclear(file_content, mac)
                     try:
                         # add Mc:mac address end of datagram
                         header='<?xml version="1.0" encoding="utf-8"?>'
