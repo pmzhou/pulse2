@@ -325,9 +325,9 @@ class P2PServerCP(pulse2.utils.Singleton):
             # will contain tools, served by tftp
             tools_folder = 'tools'
             # diskless kernel
-            diskless_kernel = 'vmlinuz'
+            diskless_kernel = 'bzImage64'
             # diskless initrd
-            diskless_initrd = 'initrd.img'
+            diskless_initrd = 'rootfs.gz'
             # diskless initrd for CD-ROM
             diskless_initrdcd = 'initrdcd'
             # will contain computer-related materials
