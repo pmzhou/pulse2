@@ -31,6 +31,7 @@ SET
     `clonezilla_restorer_params` = '-scr -icrc -icds -nogui -g auto -e1 auto -e2 -r -j2 -p true',
     `clonezilla_saver_params` = '-nogui -q2 -j2 -z1p -i 100 -sc -p true';
 
+-- Update boot service table for slitaz
 UPDATE `imaging`.`BootService`
 SET
     `value` = 'KERNEL ../##PULSE2_DISKLESS_DIR##/##PULSE2_DISKLESS_KERNEL##
@@ -55,6 +56,7 @@ INITRD ../##PULSE2_DISKLESS_DIR##/rootfs-custom.gz,../##PULSE2_DISKLESS_DIR##/##
 WHERE
     `id` = '4';
 
+-- Update keymaps to match those used by slitaz
 UPDATE  `Language` SET  `keymap` =  'us' WHERE  `id` =1;
 UPDATE  `Language` SET  `keymap` =  'fr-latin1' WHERE  `id` =2;
 UPDATE  `Language` SET  `keymap` =  'pt-latin1' WHERE  `id` =3;
