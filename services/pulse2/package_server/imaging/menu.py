@@ -225,15 +225,13 @@ class ImagingMenu:
         # kernel options put on diskless command line
         # Check if Davos or revo
         if self.config.imaging_api['diskless_folder'] == "davos":
-            self.kernel_opts = ['boot=live',
-                'config',
-                'noswap',
-                'edd=on',
-                'nomodeset',
-                'nosplash',
-                'noprompt',
-                'vga=788',
-                'fetch=tftp://%s/%s/fs.squashfs' % (PackageServerConfig().public_ip, self.config.imaging_api['diskless_folder'])]
+            self.kernel_opts = ['rw',
+                'root=/dev/null',
+                'quiet',
+                'screen=text',
+                'lang=%s',
+                'kmap=%s'
+                'tz=Europe/Paris' % (self.language, self.keyboard)]
 
             # If we have a mac, we put it in kernel params
             if macaddress is not None:
@@ -758,7 +756,7 @@ class ImagingImageItem(ImagingItem):
     # TODO: for clonezilla backend it will be useful to clean some of unused params
 
     # Grub cmdlines
-    CMDLINE = u"kernel ##PULSE2_NETDEVICE##/##PULSE2_DISKLESS_DIR##/##PULSE2_DISKLESS_KERNEL## ##PULSE2_KERNEL_OPTS## ##PULSE2_DISKLESS_OPTS## revosavedir=##PULSE2_MASTERS_DIR## revoinfodir=##PULSE2_COMPUTERS_DIR## revooptdir=##PULSE2_POSTINST_DIR## revobase=##PULSE2_BASE_DIR## revopost revomac=##MAC## revoimage=##PULSE2_IMAGE_UUID## \ninitrd ##PULSE2_NETDEVICE##/##PULSE2_DISKLESS_DIR##/##PULSE2_DISKLESS_INITRD##\n"
+    CMDLINE = u"kernel ##PULSE2_NETDEVICE##/##PULSE2_DISKLESS_DIR##/##PULSE2_DISKLESS_KERNEL## ##PULSE2_KERNEL_OPTS## revosavedir=##PULSE2_MASTERS_DIR## revoinfodir=##PULSE2_COMPUTERS_DIR## revooptdir=##PULSE2_POSTINST_DIR## revobase=##PULSE2_BASE_DIR## revopost revomac=##MAC## revoimage=##PULSE2_IMAGE_UUID## \ninitrd ##PULSE2_NETDEVICE##/##PULSE2_DISKLESS_DIR##/##PULSE2_DISKLESS_INITRD##\n"
 
     POSTINST = '%02d_postinst'
     POSTINSTDIR = 'postinst.d'
@@ -778,8 +776,8 @@ class ImagingImageItem(ImagingItem):
 
         # Davos imaging client case
         if PackageServerConfig().imaging_api['diskless_folder'] == "davos":
-            self.CMDLINE = u"kernel ##PULSE2_NETDEVICE##/##PULSE2_DISKLESS_DIR##/##PULSE2_DISKLESS_KERNEL## ##PULSE2_KERNEL_OPTS## ##PULSE2_DISKLESS_OPTS## image_uuid=##PULSE2_IMAGE_UUID## davos_action=RESTORE_IMAGE ##PULSE2_DAVOS_OPTS##\ninitrd ##PULSE2_NETDEVICE##/##PULSE2_DISKLESS_DIR##/##PULSE2_DISKLESS_INITRD##\n"
-            self.CMDLINE = u"kernel ../##PULSE2_DISKLESS_DIR##/##PULSE2_DISKLESS_KERNEL## ##PULSE2_KERNEL_OPTS## ##PULSE2_DISKLESS_OPTS## image_uuid=##PULSE2_IMAGE_UUID## davos_action=RESTORE_IMAGE ##PULSE2_DAVOS_OPTS##\ninitrd ../##PULSE2_DISKLESS_DIR##/##PULSE2_DISKLESS_INITRD##\n"
+            self.CMDLINE = u"kernel ##PULSE2_NETDEVICE##/##PULSE2_DISKLESS_DIR##/##PULSE2_DISKLESS_KERNEL## ##PULSE2_KERNEL_OPTS## image_uuid=##PULSE2_IMAGE_UUID## davos_action=RESTORE_IMAGE ##PULSE2_DAVOS_OPTS##\ninitrd ##PULSE2_NETDEVICE##/##PULSE2_DISKLESS_DIR##/##PULSE2_DISKLESS_INITRD##\n"
+            self.CMDLINE = u"kernel ../##PULSE2_DISKLESS_DIR##/##PULSE2_DISKLESS_KERNEL## ##PULSE2_KERNEL_OPTS## image_uuid=##PULSE2_IMAGE_UUID## davos_action=RESTORE_IMAGE ##PULSE2_DAVOS_OPTS##\ninitrd ../##PULSE2_DISKLESS_DIR##/##PULSE2_DISKLESS_INITRD##\n"
 
 
     def getEntry(self, network = True):
@@ -1018,7 +1016,7 @@ MENU HELPMSGENDROW 29
 LABEL multicast
 MENU LABEL Restore Multicast %s
 KERNEL ../davos/vmlinuz
-APPEND boot=live config noswap edd=on nomodeset nosplash noprompt vga=788 fetch=tftp://%s/davos/fs.squashfs mac=%s revorestorenfs image_uuid=%s davos_action=RESTORE_IMAGE_MULTICAST
+APPEND rw root=/dev/null quiet screen=text lang=fr_FR kmap=fr-latin1 tz=Europe/Paris mac=%s revorestorenfs image_uuid=%s davos_action=RESTORE_IMAGE_MULTICAST
 INITRD ../davos/initrd.img
 """
 
