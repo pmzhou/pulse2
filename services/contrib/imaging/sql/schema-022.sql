@@ -31,6 +31,30 @@ SET
     `clonezilla_restorer_params` = '-scr -icrc -icds -nogui -g auto -e1 auto -e2 -r -j2 -p true',
     `clonezilla_saver_params` = '-nogui -q2 -j2 -z1p -i 100 -sc -p true';
 
+UPDATE `imaging`.`BootService`
+SET
+    `value` = 'KERNEL ../##PULSE2_DISKLESS_DIR##/##PULSE2_DISKLESS_KERNEL##
+        APPEND ##PULSE2_KERNEL_OPTS## davos_action=REGISTER ##PULSE2_DAVOS_OPTS## dump_path=##PULSE2_INVENTORIES_DIR## timereboot=##PULSE2_PXE_TIME_REBOOT## tftp_ip=##PULSE2_PXE_TFTP_IP##
+        INITRD ../##PULSE2_DISKLESS_DIR##/rootfs-custom.gz,../##PULSE2_DISKLESS_DIR##/##PULSE2_DISKLESS_INITRD##'
+WHERE
+    `id` = '2';
+
+UPDATE `imaging`.`BootService`
+SET
+    `value` = 'KERNEL ../##PULSE2_DISKLESS_DIR##/##PULSE2_DISKLESS_KERNEL##
+APPEND ##PULSE2_KERNEL_OPTS## davos_action=SAVE_IMAGE ##PULSE2_DAVOS_OPTS##
+INITRD ../##PULSE2_DISKLESS_DIR##/rootfs-custom.gz,../##PULSE2_DISKLESS_DIR##/##PULSE2_DISKLESS_INITRD##'
+WHERE
+    `id` = '3';
+
+UPDATE `imaging`.`BootService`
+SET
+    `value` = 'KERNEL ../##PULSE2_DISKLESS_DIR##/##PULSE2_DISKLESS_KERNEL##
+APPEND ##PULSE2_KERNEL_OPTS## davos_action=DISKLESS ##PULSE2_DAVOS_OPTS##
+INITRD ../##PULSE2_DISKLESS_DIR##/rootfs-custom.gz,../##PULSE2_DISKLESS_DIR##/##PULSE2_DISKLESS_INITRD##'
+WHERE
+    `id` = '4';
+
 UPDATE version set Number = 22;
 
 COMMIT;
