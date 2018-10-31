@@ -55,6 +55,11 @@ INITRD ../##PULSE2_DISKLESS_DIR##/rootfs-custom.gz,../##PULSE2_DISKLESS_DIR##/##
 WHERE
     `id` = '4';
 
+UPDATE  `Language` SET  `keymap` =  'us' WHERE  `id` =1;
+UPDATE  `Language` SET  `keymap` =  'fr-latin1' WHERE  `id` =2;
+UPDATE  `Language` SET  `keymap` =  'pt-latin1' WHERE  `id` =3;
+UPDATE  `Language` SET  `keymap` =  'de-latin1' WHERE  `id` =4;
+
 UPDATE version set Number = 22;
 
 COMMIT;

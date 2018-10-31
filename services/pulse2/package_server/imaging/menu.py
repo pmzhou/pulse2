@@ -172,16 +172,16 @@ class ImagingMenu:
 
     DEFAULT_MENU_FILE = 'default'
     LANG_CODE = {
-        1 : 'C',
+        1 : 'en_US',
         2 : 'fr_FR',
         3 : 'pt_BR',
         4 : 'de_DE',
                 }
     KEYB_CODE = {
-        1 : None,
-        2 : 'fr',
-        3 : 'pt',
-        4 : 'de',
+        1 : 'us',
+        2 : 'fr-latin1',
+        3 : 'pt-latin1',
+        4 : 'de-latin1',
     }
 
     def __init__(self, config, macaddress = None, hostname = None,uuid = None):
@@ -211,9 +211,9 @@ class ImagingMenu:
         self.default_item_WOL = 0  # the menu default entry on WOL
         self.splashimage = None  # the menu splashimage
         self.message = None
-        self.keyboard = None  # the menu keymap, None is C
+        self.keyboard = 'us'  # the menu keymap, None is C
         self.hidden = False  # do we hide the menu ?
-        self.language = 'C'  # Menu language
+        self.language = 'en_US'  # Menu language
         self.bootcli = False  # command line access at boot time ?
         self.disklesscli = False  # command line access at diskless time ?
         self.ntblfix = False  # NT Bootloader fix
@@ -229,9 +229,9 @@ class ImagingMenu:
                 'root=/dev/null',
                 'quiet',
                 'screen=text',
-                'lang=%s',
-                'kmap=%s'
-                'tz=Europe/Paris' % (self.language, self.keyboard)]
+                'lang=%s' % self.language,
+                'kmap=%s' % self.keyboard,
+                'tz=Europe/Paris']
 
             # If we have a mac, we put it in kernel params
             if macaddress is not None:
