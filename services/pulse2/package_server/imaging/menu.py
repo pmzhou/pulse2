@@ -776,8 +776,7 @@ class ImagingImageItem(ImagingItem):
 
         # Davos imaging client case
         if PackageServerConfig().imaging_api['diskless_folder'] == "davos":
-            self.CMDLINE = u"kernel ##PULSE2_NETDEVICE##/##PULSE2_DISKLESS_DIR##/##PULSE2_DISKLESS_KERNEL## ##PULSE2_KERNEL_OPTS## image_uuid=##PULSE2_IMAGE_UUID## davos_action=RESTORE_IMAGE ##PULSE2_DAVOS_OPTS##\ninitrd ##PULSE2_NETDEVICE##/##PULSE2_DISKLESS_DIR##/##PULSE2_DISKLESS_INITRD##\n"
-            self.CMDLINE = u"kernel ../##PULSE2_DISKLESS_DIR##/##PULSE2_DISKLESS_KERNEL## ##PULSE2_KERNEL_OPTS## image_uuid=##PULSE2_IMAGE_UUID## davos_action=RESTORE_IMAGE ##PULSE2_DAVOS_OPTS##\ninitrd ../##PULSE2_DISKLESS_DIR##/##PULSE2_DISKLESS_INITRD##\n"
+            self.CMDLINE = u"kernel ../##PULSE2_DISKLESS_DIR##/##PULSE2_DISKLESS_KERNEL## ##PULSE2_KERNEL_OPTS## image_uuid=##PULSE2_IMAGE_UUID## davos_action=RESTORE_IMAGE ##PULSE2_DAVOS_OPTS##\ninitrd ../##PULSE2_DISKLESS_DIR##/rootfs-custom.gz,../##PULSE2_DISKLESS_DIR##/##PULSE2_DISKLESS_INITRD##\n"
 
 
     def getEntry(self, network = True):
@@ -1017,7 +1016,7 @@ LABEL multicast
 MENU LABEL Restore Multicast %s
 KERNEL ../davos/vmlinuz
 APPEND rw root=/dev/null quiet screen=text lang=fr_FR kmap=fr-latin1 tz=Europe/Paris mac=%s revorestorenfs image_uuid=%s davos_action=RESTORE_IMAGE_MULTICAST
-INITRD ../davos/initrd.img
+INITRD ../davos/rootfs-custom.gz,../davos/rootfs.gz
 """
 
     def ipV4toDecimal(self, ipv4):
