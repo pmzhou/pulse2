@@ -13,6 +13,7 @@
 * [BUGFIX]  Fix display of imaging custom menus
 * [BUGFIX]  Fix finding MAC Adress while using PXE Inventory
 * [BUGFIX]  Fix Machines mysql database when using several relays
+* [BUGFIX]  Removing files from package does not generate an error
 
 Pulse 2 4.4.1
 ===========
