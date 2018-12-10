@@ -22,7 +22,7 @@ AC_PREREQ(2.59)
 
 dnl autoconf initialization
 define([project], [pulse2])
-AC_INIT(project, [4.4.1], [http://www.siveo.org])
+AC_INIT(project, [4.5], [http://www.siveo.org])
 
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
@@ -149,8 +149,6 @@ AC_CONFIG_FILES([services/conf/Makefile])
 AC_CONFIG_FILES([services/conf/plugins/Makefile])
 AC_CONFIG_FILES([services/conf/pulse2/Makefile])
 AC_CONFIG_FILES([services/init.d/Makefile])
-AC_CONFIG_FILES([services/clients/Makefile])
-AC_CONFIG_FILES([services/clients/win32/Makefile])
 AC_CONFIG_FILES([web/Makefile])
 AC_CONFIG_FILES([web/modules/pulse2/version.php])
 AC_CONFIG_FILES([doc/Makefile])
