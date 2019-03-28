@@ -17,11 +17,13 @@ Pulse 2 4.5.1
 * [BUGFIX]  Check package format before doing a deployment
 * [BUGFIX]  Do not log machines info and plugins by default
 * [BUGFIX]  Fix abort of deployments on groups in cases where the machines are offline
+* [BUGFIX]  Fix copy of files when machine is connected to a relay server that is not on main Pulse server
 
 
 Pulse 2 4.5
 ===========
 * [FEATURE] Add glpi 9.2 support
+* [FEATURE] Add glpi 9.3 support
 * [FEATURE] Add Agent "Auto Update" feature
 * [FEATURE] Show the presence status in backup machine list
 * [FEATURE] New imaging post-install scripts available
