@@ -69,10 +69,16 @@ class apimanagepackagemsc:
         result['id'] = datapackage['id']
         result['version'] = datapackage['version']
         result['label'] = datapackage['name']
-        result['metagenerator'] = datapackage['metagenerator']
+        try:
+            result['metagenerator'] = datapackage['metagenerator']
+        except KeyError:
+            result['metagenerator'] = "expert"
         result['sub_packages'] = datapackage['sub_packages']
         result['description'] = datapackage['description']
-        result['targetos'] =  datapackage['targetos']
+        try:
+            result['targetos'] =  datapackage['targetos']
+        except KeyError:
+            result['targetos'] =  "win"
         result['size'] = apimanagepackagemsc.sizedirectory(result['basepath'])
         result['Qversion'] = datapackage['inventory']['queries']['Qversion']
         result['boolcnd'] = datapackage['inventory']['queries']['boolcnd']
