@@ -579,7 +579,7 @@ class Glpi92(DyngroupDatabaseHelper):
         if session == None:
             session = create_session()
 
-        query = (count and session.query(func.count(Machine.id))) or session.query(Machine)
+        query = (count and session.query(func.count(Machine.id.distinct()))) or session.query(Machine)
         # manage criterion  for xmppmaster
         ret = self.__xmppmasterfilter(filt)
 
@@ -2133,6 +2133,12 @@ class Glpi92(DyngroupDatabaseHelper):
             .select_from(self.machine.outerjoin(self.regcontents) \
                 .outerjoin(self.registries) \
             ), int(str(uuid).replace("UUID", "")))
+
+        if min != 0:
+            query = query.offset(min)
+        if max != -1:
+            max = int(max) - int(min)
+            query = query.limit(max)
 
         if count:
             ret = query.count()
@@ -4846,6 +4852,8 @@ class Glpi92(DyngroupDatabaseHelper):
         result = [{'id':a, 'hostname':b} for a,b in res]
 
         return result
+
+
 
     @DatabaseHelper._sessionm
     def get_computer_count_for_dashboard(self, session, count=True):
