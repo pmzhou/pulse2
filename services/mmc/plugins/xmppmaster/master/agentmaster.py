@@ -1910,6 +1910,13 @@ class MUCBot(sleekxmpp.ClientXMPP):
             if 'action' in data and data['action'] == 'infomachine':
                 logger.debug(
                     "** Processing machine %s that sends this information (nini inventory)" % msg['from'].bare)
+                if not 'baseurlguacamole' in data or \
+                    data['baseurlguacamole'] == "" or \
+                    not 'deployment' in data or \
+                        data['deployment'] == "" :
+                    logger.error("machine %s Configuration Missing"% msg['from'].bare)
+                    logger.error("running  agent configurator on machine %s"% msg['from'].bare)
+                    return
 
                 if XmppMasterDatabase().getPresencejid(msg['from'].bare):
                     logger.debug("Machine %s already exists in base" % msg['from'].bare)
@@ -2133,10 +2140,13 @@ class MUCBot(sleekxmpp.ClientXMPP):
                                     self.callinventory(data['from'])
                                     return
                                 osmachine = ComputerManager().getComputersOS(str(computer.id))
-                                if "Unknown operating system (PXE" in osmachine[0]['OSName']:
-                                    logger.debug("** Call inventory on PXE machine")
-                                    self.callinventory(data['from'])
-                                    return
+                                if len(osmachine) !=0:
+                                    if "Unknown operating system (PXE" in osmachine[0]['OSName']:
+                                        logger.debug("** Call inventory on PXE machine")
+                                        self.callinventory(data['from'])
+                                        return
+                                else:
+                                    logger.warning("information about the operating system is missing for %s" %(msg['from'].bare))
                                 if PluginManager().isEnabled("kiosk"):
                                     from mmc.plugins.kiosk import handlerkioskpresence
                                     # send a data message to kiosk when an inventory is registered
