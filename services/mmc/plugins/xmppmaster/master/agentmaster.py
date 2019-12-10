@@ -2132,6 +2132,7 @@ class MUCBot(sleekxmpp.ClientXMPP):
                     logger.error("machine %s Configuration Missing"% msg['from'].bare)
                     logger.error("running  agent configurator on machine %s"% msg['from'].bare)
                     return
+
                 if XmppMasterDatabase().getPresencejid(msg['from'].bare):
                     logger.debug("Machine %s already exists in base" % msg['from'].bare)
                     return
@@ -2354,7 +2355,7 @@ class MUCBot(sleekxmpp.ClientXMPP):
                                     self.callinventory(data['from'])
                                     return
                                 osmachine = ComputerManager().getComputersOS(str(computer.id))
-                                logger.error("%s"%osmachine)
+
                                 if len(osmachine) !=0:
                                     if "Unknown operating system (PXE" in osmachine[0]['OSName']:
                                         logger.debug("** Call inventory on PXE machine")
