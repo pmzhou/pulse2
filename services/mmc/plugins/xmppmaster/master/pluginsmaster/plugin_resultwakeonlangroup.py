@@ -22,17 +22,6 @@
 #
 # file pluginsmaster/_plugin_resultwakeonlangroup.py
 
-
-import base64
-import json
-import os
-import sys
-from pulse2.database.xmppmaster import XmppMasterDatabase
-from mmc.plugins.glpi.database import Glpi
-import traceback
-from utils import name_random
-import logging
-
 # plugin run wake on lan on mac adress
 # group mac adress wakeonlan different wakeonlans
 plugin = {"VERSION": "1.0", "NAME": "resultwakeonlangroup", "TYPE": "master"}
