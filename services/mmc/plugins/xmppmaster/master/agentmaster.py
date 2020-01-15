@@ -801,8 +801,10 @@ class MUCBot(sleekxmpp.ClientXMPP):
             except Exception:
                 listobjsupp.append(deployuuid)
             listmacadress = deployobject['mac'].split("||")
-            for macadressdata in listmacadress:
-                self._addsetwol(self.wolglobal_set, macadressdata)
+            if deployobject['wol'] == 1:
+                listmacadress = [x.strip() for x in deployobject['mac'].split("||")]
+                for macadressdata in listmacadress:
+                    self._addsetwol(self.wolglobal_set, macadressdata)
         self.wolglobal_set.discard("")
         if len(self.wolglobal_set):
             self._sendwolgroup(self.wolglobal_set)
