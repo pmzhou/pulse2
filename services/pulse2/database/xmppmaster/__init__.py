@@ -3772,6 +3772,7 @@ class XmppMasterDatabase(DatabaseHelper):
                     AND `relayserver`.`enabled` = %d
                     AND `relayserver`.`moderelayserver` = 'static'
                     AND `relayserver`.`classutil` = '%s'
+            order by `has_relayserverrules`.`order`
             limit 1;"""%(rule, subnetmachine, enabled, classutilMachine)
         else:
             sql = """select `relayserver`.`id`
@@ -3783,6 +3784,7 @@ class XmppMasterDatabase(DatabaseHelper):
                     AND '%s' REGEXP `has_relayserverrules`.`subject`
                     AND `relayserver`.`enabled` = %d
                     AND `relayserver`.`moderelayserver` = 'static'
+            order by `has_relayserverrules`.`order`
             limit 1;"""%(rule, subnetmachine, enabled)
         result = session.execute(sql)
         session.commit()
