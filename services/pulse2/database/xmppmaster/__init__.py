@@ -1731,7 +1731,7 @@ class XmppMasterDatabase(DatabaseHelper):
         return "pause"
 
     @DatabaseHelper._sessionm
-    def clean_syncthing_deploy(self, session):
+    def clean_syncthing_deploy(self, session, iddeploy, jid_relay):
         """
             analyse table deploy syncthing and search the shared folders which must be terminated.
         """
@@ -1756,12 +1756,11 @@ class XmppMasterDatabase(DatabaseHelper):
                                 xmppmaster.syncthing_machine.inventoryuuid
                 WHERE
                     xmppmaster.syncthing_deploy_group.id=%s """%iddeploy
-        if ars is not None:
+        if jid_relay is not None:
             sql = sql + """
             and
-            xmppmaster.syncthing_machine.jid_relay like '%s'"""%ars
+            xmppmaster.syncthing_machine.jid_relay like '%s'"""%jid_relay
         sql = sql +";"
-
         result = session.execute(sql)
         session.commit()
         session.flush()
@@ -1941,11 +1940,11 @@ class XmppMasterDatabase(DatabaseHelper):
         session.flush()
 
     @DatabaseHelper._sessionm
-    def change_end_deploy_syncthing(self, session, iddeploy,offsettime=60):
+    def change_end_deploy_syncthing(self, session, iddeploy, offsettime=60):
 
         dateend = datetime.now() + timedelta(minutes=offsettime)
         sql =""" UPDATE `xmppmaster`.`syncthing_deploy_group` SET `dateend`=%s
-                WHERE `id`= "%s";"""%(datenow, iddeploy)
+                WHERE `id`= "%s";"""%(dateend, iddeploy)
 
         session.execute(sql)
         session.commit()
@@ -4313,7 +4312,7 @@ class XmppMasterDatabase(DatabaseHelper):
             session.commit()
             session.flush()
         except IndexError:
-            logging.getLogger().warning("Configuration agent machine jid [%s]. no jid in base for configuration"%jid)
+            logging.getLogger().warning("Configuration agent machine uuidglpi [%s]. no uuid in base for configuration"%uuidinventory)
             return {}
         except Exception, e:
             logging.getLogger().error(str(e))
