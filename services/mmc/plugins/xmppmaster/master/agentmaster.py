@@ -882,42 +882,32 @@ class MUCBot(sleekxmpp.ClientXMPP):
                 touser = ""):
         if who == "":
             who = self.boundjid.bare
-        msgbody = {}
-        data = {'log' :  'xmpplog',
-                'text' : text,
-                'type': type,
-                'session' : sessionname,
-                'priority': priority,
-                'action' : action ,
-                'who': who,
-                'how' : how,
-                'why' : why,
-                'module': module,
-                'date' : None ,
-                'fromuser' : fromuser,
-                'touser' : touser}
-        msgbody['data'] = data
-        msgbody['action'] = 'xmpplog'
-        msgbody['session'] = sessionname
-        self.send_message(  mto = jid.JID("log@pulse"),
-                            mbody=json.dumps(msgbody),
-                            mtype='chat')
+        XmppMasterDatabase().setlogxmpp(text,
+                                        type=type,
+                                        sessionname=sessionname,
+                                        priority=priority,
+                                        who=who,
+                                        how=how,
+                                        why=why,
+                                        module=module,
+                                        action='',
+                                        touser=touser,
+                                        fromuser= fromuser)
 
-    def logtopulse(self, text, type='noset', sessionname='', priority=0, who=''):
-        msgbody = {}
-        data = { 'log' : 'xmpplog',
-                 'action' : 'xmpplog',
-                 'text': text,
-                 'type': type,
-                 'session': sessionname,
-                 'priority': priority,
-                 'who': who}
-        msgbody['data'] = data
-        msgbody['action'] = 'xmpplog'
-        msgbody['session'] = sessionname
-        self.send_message(mto=jid.JID("log@pulse"),
-                          mbody=json.dumps(msgbody),
-                          mtype='chat')
+    def logtopulse(self, text, type='noset', sessionname='', priority=0, who='', ret = 0):
+        if who == "":
+            who = self.boundjid.bare
+        XmppMasterDatabase().setlogxmpp(text,
+                                        type=type,
+                                        sessionname=sessionname,
+                                        priority=priority,
+                                        who=who,
+                                        how="",
+                                        why="",
+                                        module="MASTER_LOG",
+                                        action='',
+                                        touser="",
+                                        fromuser= "MASTER")
 
     def changed_status(self, msg_changed_status):
         try:
