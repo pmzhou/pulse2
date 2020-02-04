@@ -58,8 +58,7 @@ def action(objectxmpp, action, sessionid, data, msg, ret, dataobj):
 def testsignaturecodechaine(objectxmpp, data, sessionid, msg):
     codechaine="%s"%(msg['from'])
     result = False
-    keyAES32 = [str(x.strip()) for x in objectxmpp.config.keyAES32.split(",") if x.strip() != ""]
-    for t in keyAES32:
+    for t in objectxmpp.config.keyAES32:
         cipher = AESCipher(t)
         decrypted = cipher.decrypt(data['codechaine'])
         if str(decrypted) == str(codechaine):
