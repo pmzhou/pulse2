@@ -35,7 +35,7 @@ import logging
 
 # plugin run wake on lan on mac adress
 # group mac adress wakeonlangroup different wakeonlan
-plugin = {"VERSION": "1.0", "NAME": "wakeonlangroup", "TYPE": "master"}
+plugin = {"VERSION": "1.1", "NAME": "wakeonlangroup", "TYPE": "master"}
 
 
 def action(xmppobject, action, sessionid, data, message, ret, dataobj):
@@ -55,7 +55,7 @@ def action(xmppobject, action, sessionid, data, message, ret, dataobj):
                                    type='deploy',
                                    sessionname=sessionid,
                                    priority=-1,
-                                   action="",
+                                   action="xmpplog",
                                    who="",
                                    how="",
                                    why=xmppobject.boundjid.bare,

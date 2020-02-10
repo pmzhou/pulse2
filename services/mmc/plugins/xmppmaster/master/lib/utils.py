@@ -19,6 +19,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
 
+#file : master/lib/utils.py
+
 import netifaces
 import json
 import subprocess
@@ -45,7 +47,7 @@ from datetime import datetime
 
 from Crypto import Random
 from Crypto.Cipher import AES
-
+import urllib2
 logger = logging.getLogger()
 
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "pluginsmaster"))
@@ -220,7 +222,7 @@ def create_Win_user(username, password, full_name=None, comment=None):
     win32net.NetLocalGroupAddMembers(None, 'Users', 3, [
         {'domainandname': r'{0}\{1}'.format(socket.gethostname(), username)}])
 
-    hide_user_account(username)
+    # hide_user_account(username)
     return True
 
 
@@ -549,7 +551,7 @@ def joint_compteAD(domain, password, login, group):
             if computer.PartOfDomain:
                 print computer.Domain  # DOMCD
                 print computer.SystemStartupOptions
-                computer.JoinDomainOrWorkGroup(domaine, password, login, group, 3)
+                computer.JoinDomainOrWorkGroup(domain, password, login, group, 3)
     finally:
         pythoncom.CoUninitialize()
 

@@ -40,6 +40,7 @@ class xmppMasterConfig(PluginConfig, XmppMasterDatabaseConfig):
 
     def loadparametersplugins(self, namefile):
         Config = ConfigParser.ConfigParser()
+        Config.optionxform = str
         Config.read(namefile)
         return Config.items("parameters")
 
@@ -91,10 +92,6 @@ class xmppMasterConfig(PluginConfig, XmppMasterDatabaseConfig):
         self.confjidchatroom = "%s@%s" % (
             self.get('configuration_server', 'confmuc_chatroom'), self.get('chatroom', 'server'))
         self.confpasswordmuc = self.get('configuration_server', 'confmuc_password')
-        if self.has_option("configuration_server", "keyAES32"):
-            self.keyAES32 = self.get('configuration_server', 'keyAES32')
-        else:
-            self.keyAES32 = "abcdefghijklnmopqrstuvwxyz012345"
         ########chat#############
         # The jidagent must be the smallest value in the list of mac addresses
         self.chatserver = self.get('chat', 'domain')
@@ -106,6 +103,16 @@ class xmppMasterConfig(PluginConfig, XmppMasterDatabaseConfig):
             self.remote_update_plugin_interval = self.getint('global', 'remote_update_plugin_interval')
         except Exception:
             self.remote_update_plugin_interval = 60
+        # deployment support for master
+        try:
+            self.Booltaskdeploy = self.getboolean('global', 'taskdeploy')
+        except Exception:
+            self.Booltaskdeploy = True
+        # manage session
+        try:
+            self.Boolsessionwork = self.getboolean('global', 'sessionwork')
+        except Exception:
+            self.Boolsessionwork = True
         # Enable memory leaks checks and define interval (in seconds)
         try:
             self.memory_leak_check = self.getboolean('global', 'memory_leak_check')

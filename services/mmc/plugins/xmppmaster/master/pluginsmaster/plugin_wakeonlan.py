@@ -23,9 +23,7 @@
 # file pluginsmaster/plugin_wakeonlan.py
 
 
-import base64
 import json
-import os
 import sys
 from pulse2.database.xmppmaster import XmppMasterDatabase
 from mmc.plugins.glpi.database import Glpi
@@ -55,7 +53,7 @@ def action(xmppobject, action, sessionid, data, message, ret, dataobj):
                                    type='deploy',
                                    sessionname=sessionid,
                                    priority=-1,
-                                   action="",
+                                   action="xmpplog",
                                    who="",
                                    how="",
                                    why=xmppobject.boundjid.bare,
@@ -79,7 +77,7 @@ def action(xmppobject, action, sessionid, data, message, ret, dataobj):
                                        type='deploy',
                                        sessionname=sessionid,
                                        priority=-1,
-                                       action="",
+                                       action="xmpplog",
                                        who="",
                                        how="",
                                        why=xmppobject.boundjid.bare,

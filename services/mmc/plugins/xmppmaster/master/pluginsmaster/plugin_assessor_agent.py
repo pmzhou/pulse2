@@ -24,10 +24,7 @@
 
 import base64
 import json
-import os
-import utils
-import pprint
-from utils import AESCipher
+from utils import AESCipher, subnetnetwork
 import logging
 from pulse2.database.xmppmaster import XmppMasterDatabase
 import traceback
@@ -35,6 +32,7 @@ from random import randint
 from localisation import Localisation
 import operator
 import netaddr
+from manageADorganization import manage_fqdn_window_activedirectory
 
 logger = logging.getLogger()
 
@@ -56,6 +54,22 @@ def action(objectxmpp, action, sessionid, data, msg, ret, dataobj):
     except Exception:
         sendErrorConnectionConf(objectxmpp, sessionid, msg)
         logger.error("\n%s"%(traceback.format_exc()))
+
+def testsignaturecodechaine(objectxmpp, data, sessionid, msg):
+    codechaine="%s"%(msg['from'])
+    result = False
+    keyAES32 = [str(x.strip()) for x in objectxmpp.config.keyAES32.split(",") if x.strip() != ""]
+    for t in keyAES32:
+        cipher = AESCipher(t)
+        decrypted = cipher.decrypt(data['codechaine'])
+        if str(decrypted) == str(codechaine):
+            result = True
+            break
+    if not result:
+        logger.warning("authentification False %s"%(codechaine))
+
+        sendErrorConnectionConf(objectxmpp, sessionid, msg)
+    return result
 
 def MessagesAgentFromChatroomConfig(objectxmpp, action, sessionid, data, msg, ret, dataobj):
     logger.debug("MessagesAgentFromChatroomConfig")
@@ -79,17 +93,12 @@ def MessagesAgentFromChatroomConfig(objectxmpp, action, sessionid, data, msg, re
         objectxmpp.sendErrorConnectionConf(objectxmpp, sessionid, msg)
         return
 
-    if not 'codechaine' in data:
+    if 'codechaine' not in data:
         logger.debug("missing authentification from %s"%(codechaine))
         sendErrorConnectionConf(objectxmpp, sessionid, msg)
         return
 
-    cipher = AESCipher(objectxmpp.config.keyAES32)
-
-    decrypted = cipher.decrypt(data['codechaine'])
-    if decrypted != codechaine:
-        logger.debug("authentification False %s"%(codechaine))
-        sendErrorConnectionConf(objectxmpp, sessionid, msg)
+    if not testsignaturecodechaine(objectxmpp, data, sessionid, msg):
         return
 
     if data['ippublic'] is not None and data['ippublic'] != "":
@@ -127,7 +136,6 @@ def MessagesAgentFromChatroomConfig(objectxmpp, action, sessionid, data, msg, re
     ordre = XmppMasterDatabase().Orderrules()
     odr = [x[0] for x in ordre]
     logger.debug("Rule order : %s " % odr)
-    indetermine = []
     result = []
     for x in ordre:
         # User Rule : 1
@@ -190,8 +198,13 @@ def MessagesAgentFromChatroomConfig(objectxmpp, action, sessionid, data, msg, re
                                     "%s user %s \nPossible relay servers" \
                                     " : id list %s " % (nbserver, data['information']['info']['hostname'],
                                                         data['information']['users'][0], listeserver))
-                        logger.warn("Continues for the other rules. Random choice only if no other is found.")
-                        indetermine = XmppMasterDatabase().IpAndPortConnectionFromServerRelay(listeserver[index])
+                        logger.warn("ARS Random choice : %s"%listeserver[index])
+                        result = XmppMasterDatabase().IpAndPortConnectionFromServerRelay(listeserver[index])
+                        msg_log("The Geoposition",
+                                data['information']['info']['hostname'],
+                                data['information']['users'][0],
+                                result)
+                        break
                     else:
                         if relayserver != -1:
                             result = XmppMasterDatabase().IpAndPortConnectionFromServerRelay(relayserver)
@@ -200,16 +213,9 @@ def MessagesAgentFromChatroomConfig(objectxmpp, action, sessionid, data, msg, re
                                     data['information']['users'][0],
                                     result)
                             break
-                if len(result) != 0:
-                    result = [objectxmpp.config.defaultrelayserverip,
-                              objectxmpp.config.defaultrelayserverport,
-                              result2[0],
-                              objectxmpp.config.defaultrelayserverbaseurlguacamole]
-                    msg_log("use default relay server",
-                            data['information']['info']['hostname'],
-                            data['information']['users'][0],
-                            result)
-                    break
+                        else:
+                            logger.warn("algo rule 3 inderterminat")
+                            continue
             except KeyError:
                 logger.error("Error algo rule 3")
                 logger.error("\n%s"%(traceback.format_exc()))
@@ -308,6 +314,21 @@ def MessagesAgentFromChatroomConfig(objectxmpp, action, sessionid, data, msg, re
                         data['information']['users'][0],
                         result)
                 break
+        # Network Rule : 10
+        elif x[0] == 10:
+            # Associates relay server based on network address
+            logger.debug("Analysis the 10th rule : Associate relay server based on netmask adress")
+            logger.debug("Net mask adress: %s" % data['xmppmask'])
+            result1 = XmppMasterDatabase().algorulebynetmaskaddress(data['xmppmask'],
+                                                                    data['classutil'])
+            if len(result1) > 0:
+                logger.debug("Applied Rule : Associate relay server based on net Mask address")
+                result = XmppMasterDatabase().IpAndPortConnectionFromServerRelay(result1[0].id)
+                msg_log("net mask address",
+                        data['information']['info']['hostname'],
+                        data['information']['users'][0],
+                        result)
+                break
 
     try:
         msg_string ="[user %s hostanme %s] : "\
@@ -335,17 +356,41 @@ def MessagesAgentFromChatroomConfig(objectxmpp, action, sessionid, data, msg, re
                                                                          "static")
         z = [listars[x] for x in listars]
         z1 = sorted(z, key=operator.itemgetter(4))
-        arsjid = XmppMasterDatabase().getRelayServerfromjid("rspulse@pulse")
+        # arsjid = XmppMasterDatabase().getRelayServerfromjid("rspulse@pulse")
         # Start relay server agent configuration
         # we order the ARS from the least used to the most used.
-        reponse = {'action': 'resultconnectionconf',
+        response = {'action': 'resultconnectionconf',
                     'sessionid': data['sessionid'],
                     'data': z1,
                     'syncthing' : objectxmpp.config.announce_server,
                     'ret': 0
                     }
+        if len(listars) == 0:
+            logger.warning("No configuration sent to machine "\
+                "agent %s. ARS %s is found but it is stopped." % (data['information']['info']['hostname'], result[2]))
+            logger.warning("ACTION: Re-start the ARS on %s, and wait for the agent to run its reconfiguration."%(result[2]))
+            objectxmpp.xmpplog("No configuration sent to machine agent %s. ARS %s is found but it is stopped." % (result[2],
+                                                                                  data['information']['info']['hostname'] ),
+                            type = 'conf',
+                            sessionname =  sessionid,
+                            priority = -1,
+                            action = "xmpplog",
+                            who = data['information']['info']['hostname'],
+                            module = "Configuration | Notify | connectionagent",
+                            date = None,
+                            fromuser = objectxmpp.boundjid.bare)
+            sendErrorConnectionConf(objectxmpp, sessionid, msg)
+            return
+        if "substitute" in data and \
+            "conflist" in data["substitute"] and \
+                len(data["substitute"]["conflist"]) > 0:
+            response["substitute"] =  XmppMasterDatabase().\
+                                    substituteinfo(data["substitute"],
+                                                   z1[0][2])
+            response["substitute"]["ars_chooose_for_substitute"] = z1[0][2]
+            logger.debug("substitute resend to agent : %s"%json.dumps(response["substitute"],indent=4))
         objectxmpp.send_message(mto=msg['from'],
-                            mbody=json.dumps(reponse),
+                            mbody=json.dumps(response),
                             mtype='chat')
         #add account for delete
         objectxmpp.confaccount.append(msg['from'].user)
@@ -364,12 +409,12 @@ def msg_log(msg_header, hostname, user, result):
     pass
 
 def sendErrorConnectionConf(objectxmpp, session,  msg):
-    reponse = {'action': 'resultconnectionconf',
+    response = {'action': 'resultconnectionconf',
                'sessionid': session,
                'data': [],
                'syncthing' : "",
                'ret': 255}
     objectxmpp.send_message(mto=msg['from'],
-                        mbody=json.dumps(reponse),
+                        mbody=json.dumps(response),
                         mtype='chat')
 
