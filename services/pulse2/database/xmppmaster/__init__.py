@@ -3706,7 +3706,7 @@ class XmppMasterDatabase(DatabaseHelper):
             Field "relayserver_id" is used to define the Relayserver to be assigned to the machines matching that rule
             enabled = 1 Only on active relayserver.
             If classutilMachine is deprived then the choice of relayserver will be in the relayserver reserve to a use of the private machine.
-            subnetmachine CIDR machine. 
+            subnetmachine CIDR machine.
                 CIDR matching with suject of table has_relayserverrules
                 -- suject is the expresseion relationel.
                 -- eg : ^55\.171\.[5-6]{1}\.[0-9]{1,3}/24$
@@ -4006,6 +4006,24 @@ class XmppMasterDatabase(DatabaseHelper):
         session.flush()
         for linemachine in machinespresente:
             result[linemachine.uuid_inventorymachine] = True
+        return result
+
+    @DatabaseHelper._sessionm
+    def getPresenceExistuuids(self, session, uuids):
+        if isinstance(uuids, basestring):
+            uuids=[uuids]
+        result = { }
+        for uuidmachine in uuids:
+            result[uuidmachine] = [0,0]
+        machinespresente = session.query(Machines.uuid_inventorymachine,Machines.enabled).\
+            filter(Machines.uuid_inventorymachine.in_(uuids)).all()
+        session.commit()
+        session.flush()
+        for linemachine in machinespresente:
+            out = 0;
+            if linemachine.enabled == True:
+                out = 1
+            result[linemachine.uuid_inventorymachine] = [out, 1 ]
         return result
 
     #topology
@@ -4371,8 +4389,8 @@ class XmppMasterDatabase(DatabaseHelper):
                 listcommand.append(exclud)
                 listconfsubstitute[t] = listcommand
             #update contsub
-            sql="""UPDATE `xmppmaster`.`substituteconf` 
-                SET 
+            sql="""UPDATE `xmppmaster`.`substituteconf`
+                SET
                     `countsub` = `countsub` + '1'
                 WHERE
                     `id` IN (%s);"""%','.join([x for x in incrementeiscount])

@@ -206,6 +206,9 @@ def getPresenceuuid(uuid):
 def getPresenceuuids(uuids):
     return XmppMasterDatabase().getPresenceuuids(uuids)
 
+def getPresenceExistuuids(uuids):
+    return XmppMasterDatabase().getPresenceExistuuids(uuids)
+
 # topology
 
 
