@@ -569,8 +569,8 @@ class MUCBot(sleekxmpp.ClientXMPP):
                     msglog.append("<span style='color : red;font-weight: bold;'>ERROR MACHINE %s DISAPPEARED "\
                         "DURING DEPLOYMENT. GLPI UUID %s</span>"%(machine['jidmachine'], UUID))
                     msglog.append("<span style='color : red;font-weight: bold;'>DEPLOY TERMINATE</span>")
-                    msglog.append("<span style='color : red;font-weight: bold;'>ABORD DEPLOY</span>")
-                    XmppMasterDatabase().update_state_deploy(machine['id'], "ABORD MACHINE DISAPPERED")
+                    msglog.append("<span style='color : red;font-weight: bold;'>ABORT DEPLOY</span>")
+                    XmppMasterDatabase().update_state_deploy(machine['id'], "ABORT MACHINE DISAPPERED")
                 elif resultpresence[UUID][0] == 1:
                     XmppMasterDatabase().update_state_deploy(machine['id'], "WAITING MACHINE ONLINE")
                 else:
@@ -813,7 +813,7 @@ class MUCBot(sleekxmpp.ClientXMPP):
                                                 machine.name,
                                                 UUID,
                                                 machine.contact,
-                                                "ABORD MISSING AGENT",
+                                                "ABORT MISSING AGENT",
                                                 sessiondeployementless,
                                                 user=machine.contact,
                                                 login=machine.contact,
@@ -832,7 +832,7 @@ class MUCBot(sleekxmpp.ClientXMPP):
                     "the machine agent, or install the agent on the"\
                         " machine [%s (%s)] if it is missing.</span>"%(machine.name,
                                                                        UUID))
-                msg.append("<span style='color : red;font-weight: bold;'>ABORD DEPLOY</span>")
+                msg.append("<span style='color : red;font-weight: bold;'>ABORT DEPLOY</span>")
                 for logmsg in msg:
                     self.xmpplog(logmsg,
                              type='deploy',
@@ -1157,7 +1157,7 @@ class MUCBot(sleekxmpp.ClientXMPP):
                                             "error_name_package____",
                                             uuidmachine,
                                             title,
-                                            "ABORD PACKAGE UUID MISSING",
+                                            "ABORT PACKAGE UUID MISSING",
                                             sessiondeployementless,
                                             user=login,
                                             login=login,
@@ -1172,7 +1172,7 @@ class MUCBot(sleekxmpp.ClientXMPP):
                 "package %s misssing"%uuidpackage)
             msg.append("<span style='color : blue;font-weight: bold;'>ACTION :"\
                 " Check the package uuid [%s].</span>"%(uuidpackage))
-            msg.append("<span style='color : red;font-weight: bold;'>ABORD DEPLOY</span>")
+            msg.append("<span style='color : red;font-weight: bold;'>ABORT DEPLOY</span>")
             for logmsg in msg:
                 self.xmpplog(logmsg,
                              type='deploy',
@@ -1229,14 +1229,14 @@ class MUCBot(sleekxmpp.ClientXMPP):
                                 msg.append("<span style='color : red;font-weight: bold;'>No alternative ARS found</span>")
                                 msg.append("<span style='color : blue;font-weight: bold;'>ACTION :"\
                                 " Either restart it or rerun the configurator on the machine %s to use another ARS</span>"%(name))
-                                msg.append("<span style='color : red;font-weight: bold;'>ABORD DEPLOY</span>")
+                                msg.append("<span style='color : red;font-weight: bold;'>ABORT DEPLOY</span>")
                                 XmppMasterDatabase().adddeploy(idcommand,
                                                                 jidmachine,
                                                                 jidrelay,
                                                                 name,
                                                                 uuidmachine,
                                                                 title,
-                                                                "ABORD ARS DEPLOY DOWN",
+                                                                "ABORT ARS DEPLOY DOWN",
                                                                 sessiondeployementless,
                                                                 user=login,
                                                                 login=login,
@@ -1281,7 +1281,7 @@ class MUCBot(sleekxmpp.ClientXMPP):
                                                         name,
                                                         uuidmachine,
                                                         title,
-                                                        "ABORD ALTERNATIF DOWN",
+                                                        "ABORT ALTERNATIF DOWN",
                                                         sessiondeployementless,
                                                         user=login,
                                                         login=login,
@@ -1294,7 +1294,7 @@ class MUCBot(sleekxmpp.ClientXMPP):
                                                         syncthing = 0)
                         msg.append("<span style='color : red;font-weight: bold;'>Alternatif ARS is Down</span>")
                         msg.append("<span style='color : blue;font-weight: bold;'>ACTION : check ARS Cluster.")
-                        msg.append("<span style='color : red;font-weight: bold;'>ABORD DEPLOY</span>")
+                        msg.append("<span style='color : red;font-weight: bold;'>ABORT DEPLOY</span>")
                         for logmsg in msg:
                             self.xmpplog(logmsg,
                                         type='deploy',
@@ -1334,7 +1334,7 @@ class MUCBot(sleekxmpp.ClientXMPP):
                                                 name,
                                                 uuidmachine,
                                                 title,
-                                                "ABORD ARS GROUP DEPLOY MISSING",
+                                                "ABORT ARS GROUP DEPLOY MISSING",
                                                 sessiondeployementless,
                                                 user=login,
                                                 login=login,
@@ -1347,7 +1347,7 @@ class MUCBot(sleekxmpp.ClientXMPP):
                                                 syncthing = 0)
                 msg.append("<span style='color : red;font-weight: bold;'>ARS for deployment is missing for machine.[%s] </span>"%uuidmachine)
                 msg.append("<span style='color : blue;font-weight: bold;'>ACTION : The configurator must be restarted on the machine.")
-                msg.append("<span style='color : red;font-weight: bold;'>ABORD DEPLOY</span>")
+                msg.append("<span style='color : red;font-weight: bold;'>ABORT DEPLOY</span>")
                 for logmsg in msg:
                     self.xmpplog(logmsg,
                                 type='deploy',
@@ -1368,7 +1368,7 @@ class MUCBot(sleekxmpp.ClientXMPP):
                                             name,
                                             uuidmachine,
                                             title,
-                                            "ABORD UUID MACHINE",
+                                            "ABORT UUID MACHINE",
                                             sessiondeployementless,
                                             user=login,
                                             login=login,
@@ -1432,14 +1432,14 @@ class MUCBot(sleekxmpp.ClientXMPP):
             logger.error("deploy %s error package name version missing" % (name))
             msg.append("<span style='color : red;font-weight: bold;'>deploy %s error package name version missing </span>"%(name))
             msg.append("<span style='color : blue;font-weight: bold;'>ACTION : check package %s."%name)
-            msg.append("<span style='color : red;font-weight: bold;'>ABORD DEPLOY</span>")
+            msg.append("<span style='color : red;font-weight: bold;'>ABORT DEPLOY</span>")
             XmppMasterDatabase().adddeploy(idcommand,
                                             jidmachine,
                                             jidrelay,
                                             name,
                                             uuidmachine,
                                             title,
-                                            "ABORD PACKAGE NAME VERSION MISSING",
+                                            "ABORT PACKAGE NAME VERSION MISSING",
                                             sessiondeployementless,
                                             user=login,
                                             login=login,
@@ -1461,19 +1461,18 @@ class MUCBot(sleekxmpp.ClientXMPP):
                             fromuser=login)
             return False
         # Name the event
-        dd = name_random(5, "deploy_")
         path = managepackage.getpathpackagename(name)
         if path is None:
             msg.append("<span style='color : red;font-weight: bold;'>Pzrameter Name (%s) missing in package</span>"%(name))
             msg.append("<span style='color : blue;font-weight: bold;'>ACTION : check name in package</span>")
-            msg.append("<span style='color : red;font-weight: bold;'>ABORD DEPLOY</span>")
+            msg.append("<span style='color : red;font-weight: bold;'>ABORT DEPLOY</span>")
             XmppMasterDatabase().adddeploy(idcommand,
                                             jidmachine,
                                             jidrelay,
                                             name,
                                             uuidmachine,
                                             title,
-                                            "ABORD PACKAGE NAME MISSING",
+                                            "ABORT PACKAGE NAME MISSING",
                                             sessiondeployementless,
                                             user=login,
                                             login=login,
@@ -1505,7 +1504,7 @@ class MUCBot(sleekxmpp.ClientXMPP):
                                             name,
                                             uuidmachine,
                                             title,
-                                            "ABORD DESCRIPTOR MISSING",
+                                            "ABORT DESCRIPTOR MISSING",
                                             sessiondeployementless,
                                             user=login,
                                             login=login,
@@ -1520,7 +1519,7 @@ class MUCBot(sleekxmpp.ClientXMPP):
                        " : xmppdeploy.json missing</span>"%(name, uuidmachine))
             msg.append("<span style='color : blue;font-weight: bold;'>ACTION : "\
                 "look for the reason for missing this descriptor file [Xmppdeploy.json].</span>")
-            msg.append("<span style='color : red;font-weight: bold;'>ABORD DEPLOY</span>")
+            msg.append("<span style='color : red;font-weight: bold;'>ABORT DEPLOY</span>")
             for logmsg in msg:
                 self.xmpplog(logmsg,
                             type='deploy',
